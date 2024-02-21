@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+// Package publisher describes the core-pay service and all corresponding GRPCs.
+package core.pay.v1;
+
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "gen/go";
+
+// Subscription type
+enum SubscriptionType {
+  // UNKNOWN
+  UNKNOWN = 0;
+  // TRIAL
+  TRIAL = 1;
+  // PREMIUM
+  PREMIUM = 2;
+  // APPLE_TRIAL
+  APPLE_TRIAL = 3;
+  // GOOGLE_TRIAL
+  GOOGLE_TRIAL = 4;
+  // APPLE_PREMIUM
+  APPLE_PREMIUM = 5;
+  // GOOGLE_PREMIUM
+  GOOGLE_PREMIUM = 6;
+  // MANUAL_PREMIUM
+  MANUAL_PREMIUM = 7;
+}
+
+// Product message
+message Product {
+  string id = 1 [(validate.rules).string = {min_len: 3, max_len: 32}];
+  string name = 2 [(validate.rules).string = {min_len: 3, max_len: 32}];
+  string token = 3 [(validate.rules).string = {min_len: 3, max_len: 32}];
+  SubscriptionType type = 4 [(validate.rules).enum.defined_only = true];
+  google.protobuf.Timestamp purchased_at = 5 [(validate.rules).timestamp.gte.seconds = 0];
+  google.protobuf.Timestamp expires_in = 6 [(validate.rules).timestamp.gte.seconds = 0];
+}
+
+// User message
+message User {
+  string id = 1 [(validate.rules).string.min_len = 1];
+  string email = 2 [(validate.rules).string.email = true];
+  string name = 3 [(validate.rules).string = {min_len: 3, max_len: 32}];
+  string image = 4 [(validate.rules).string = {min_len: 3, max_len: 32}];
+  optional Product product = 5 [(validate.rules).message.required = false];
+}
+
+// UserRequest message
+message UserRequest {
+  string id = 1 [(validate.rules).string.min_len = 1];
+}
+
+// CreateOrUpdateUserRequest message
+message CreateOrUpdateUserRequest {
+  string id = 1 [(validate.rules).string.min_len = 1];
+  string email = 2 [(validate.rules).string.email = true];
+  string name = 3 [(validate.rules).string = {min_len: 3, max_len: 32}];
+  optional string image = 4 [(validate.rules).string = {min_len: 3, max_len: 32}];
+}
+
+// UserResponse message
+message UserResponse {
+  optional User user = 1;
+}
+
+// PayService service
+service PayService {
+  // GetUser
+  rpc GetUser (UserRequest) returns (UserResponse) {
+    option (google.api.http) = {
+      get: "/v1/user"
+    };
+  }
+
+  // CreateOrUpdateUser
+  rpc CreateOrUpdateUser (CreateOrUpdateUserRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/v1/user"
+    };
+  }
+}

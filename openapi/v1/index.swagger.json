@@ -1,0 +1,201 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "v1/index.proto",
+    "description": "Package publisher describes the core-pay service and all corresponding GRPCs.",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "PayService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/user": {
+      "get": {
+        "summary": "GetUser",
+        "operationId": "PayService_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "PayService"
+        ]
+      },
+      "post": {
+        "summary": "CreateOrUpdateUser",
+        "operationId": "PayService_CreateOrUpdateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1User"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "image",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "PayService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Product": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/v1SubscriptionType"
+        },
+        "purchasedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiresIn": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "title": "Product message"
+    },
+    "v1SubscriptionType": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "TRIAL",
+        "PREMIUM",
+        "APPLE_TRIAL",
+        "GOOGLE_TRIAL",
+        "APPLE_PREMIUM",
+        "GOOGLE_PREMIUM",
+        "MANUAL_PREMIUM"
+      ],
+      "default": "UNKNOWN",
+      "description": "- UNKNOWN: UNKNOWN\n - TRIAL: TRIAL\n - PREMIUM: PREMIUM\n - APPLE_TRIAL: APPLE_TRIAL\n - GOOGLE_TRIAL: GOOGLE_TRIAL\n - APPLE_PREMIUM: APPLE_PREMIUM\n - GOOGLE_PREMIUM: GOOGLE_PREMIUM\n - MANUAL_PREMIUM: MANUAL_PREMIUM",
+      "title": "Subscription type"
+    },
+    "v1User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/definitions/v1Product"
+        }
+      },
+      "title": "User message"
+    },
+    "v1UserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1User"
+        }
+      },
+      "title": "UserResponse message"
+    }
+  }
+}
