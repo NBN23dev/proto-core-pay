@@ -1,0 +1,365 @@
+syntax = "proto3";
+
+// This document describes the store manager API for NBN23 SwishPay platform.
+package store.manager.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "gen/go";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+      title: "Store manager API";
+      version: "1.0.0";
+      contact: {
+          name: "NBN23";
+          url: "https://github.com/NBN23dev/proto-store-manager";
+          email: "develop@nbn23.com";
+      };
+  };
+  host: "store-manager.nbn23.app";
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+  security_definitions: {
+    security: {
+      key: "bearer"
+      value: {
+        type: TYPE_API_KEY
+        in: IN_HEADER
+        name: "Authorization"
+        description: "Authentication bearer token: {'Authorization': 'Bearer <token>'}"
+      }
+    }
+  }
+  security: {
+    security_requirement: {
+      key: "bearer"
+    }
+  }
+};
+
+// SubscriptionType 
+//
+// SubscriptionType represents the type of subscription that a user has purchased.
+enum SubscriptionType {
+  SUBSCRIPTION_TYPE_UNSPECIFIED = 0;
+  // SUBSCRIPTION_TYPE_TRIAL represents a trial subscription.
+  SUBSCRIPTION_TYPE_TRIAL= 1;
+  // SUBSCRIPTION_TYPE_TRIAL represents a premium subscription.
+  SUBSCRIPTION_TYPE_PREMIUM = 2;
+  // SUBSCRIPTION_TYPE_PREMIUM represents a manual premium subscription.
+  SUBSCRIPTION_TYPE_MANUAL_PREMIUM = 3;
+}
+
+// SubscriptionProvider
+//
+// SubscriptionProvider represents the provider of the subscription.
+enum SubscriptionProvider {
+  SUBSCRIPTION_PROVIDER_UNSPECIFIED = 0;
+  // SUBSCRIPTION_PROVIDER_APPLE represents a subscription purchased through Apple.
+  SUBSCRIPTION_PROVIDER_APPLE = 1;
+  // SUBSCRIPTION_PROVIDER_GOOGLE represents a subscription purchased through Google.
+  SUBSCRIPTION_PROVIDER_GOOGLE = 2;
+  // SUBSCRIPTION_PROVIDER_STRIPE represents a subscription purchased through Stripe.
+  SUBSCRIPTION_PROVIDER_STRIPE = 3;
+  // SUBSCRIPTION_PROVIDER_REDSYS represents a subscription purchased through Redsys.
+  SUBSCRIPTION_PROVIDER_REDSYS = 4;  
+}
+
+// ProductPayload
+//
+// ProductPayload represents the payload of a product.
+message ProductPayload {
+  // members is the number of members that the subscription has.
+  optional int32 members = 1 [(buf.validate.field).int32 = {gt: 1}];
+  // recipients is the list of emails of the recipients of the subscription.
+  repeated string recipients = 3 [(buf.validate.field).repeated.items.string.email = true];
+  // owner_id is the unique identifier of the owner of the subscription.
+  optional string owner_id = 4 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // gifted_id is the unique identifier of the user who gifted the subscription.
+  optional string gifted_id = 5 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+}
+
+// Subscription
+//
+// Subscription represents a subscription that a user has purchased.
+message Subscription {
+  // user_id is the unique identifier of the user.
+  string user_id = 1 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // app_id is the unique identifier of the application.
+  string app_id = 2 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // product_id is the unique identifier of the product.
+  string product_id = 3 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // purchase_token is the purchase token of the subscription.
+  string purchase_token = 4 [(buf.validate.field).string = {min_len: 3, max_bytes: 7168}];
+  // type is the type of the subscription.
+  SubscriptionType type = 5 [(buf.validate.field).enum = {not_in: [0]}];
+  // provider is the provider of the subscription.
+  SubscriptionProvider provider = 6 [(buf.validate.field).enum = {not_in: [0]}];
+  // purchased_at is the time when the subscription was purchased.
+  google.protobuf.Timestamp purchased_at = 7 [(buf.validate.field).timestamp.gte.seconds = 0];
+  // expires_at is the time when the subscription expires.
+  google.protobuf.Timestamp expires_at = 8 [(buf.validate.field).timestamp.gte.seconds = 0];
+  // product_payload is the payload of the product.
+  optional ProductPayload product_payload = 9 [(buf.validate.field) = {required: false}];
+}
+
+// User
+//
+// User represents a user of the application.
+message User {
+  // id is the unique identifier of the user.
+  string id = 1 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // email is the email of the user.
+  string email = 2 [(buf.validate.field).string.email = true];
+  // name is the name of the user.
+  optional string name = 3 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // image is the image URL of the user.
+  optional string image = 4 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+}
+
+// GetUserRequest
+//
+// GetUserRequest represents a request to get a user.
+message GetUserRequest {
+  // user_id is the unique identifier of the user.
+  string user_id = 1 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+}
+
+// GetSubscriptionRequest
+//
+// GetSubscriptionRequest represents a request to get a subscription.
+message GetSubscriptionRequest {
+  // user_id is the unique identifier of the user.
+  string user_id = 1 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // app_id is the unique identifier of the application.
+  string app_id = 2 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+}
+
+// UpsertUserRequest
+//
+// UpsertUserRequest represents a request to create or update a user.
+message UpsertUserRequest {
+  // email is the email of the user.
+  string email = 2 [(buf.validate.field).string.email = true];
+  // name is the name of the user.
+  optional string name = 3 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // image is the image URL of the user.
+  optional string image = 4 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+}
+
+// AddMemberRequest
+//
+// AddMemberRequest represents a request to add a member to a subscription.
+message AddMemberRequest {
+  // user_id is the unique identifier of the user.
+  string user_id = 1 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // app_id is the unique identifier of the application.
+  string app_id = 2 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // recipient is the email of the member to add to the subscription.
+  string recipient = 3 [(buf.validate.field).string.email = true];
+}
+
+// RemoveMemberRequest
+//
+// RemoveMemberRequest represents a request to remove a member from a subscription.
+message RemoveMemberRequest {
+  // user_id is the unique identifier of the user.
+  string user_id = 1 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // app_id is the unique identifier of the application.
+  string app_id = 2 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // recipient is the email of the member to remove from the subscription.
+  string recipient = 4 [(buf.validate.field).string.email = true];
+}
+
+// GetUserResponse
+//
+// GetUserResponse represents a response to get a user.
+message GetUserResponse {
+  // user is the user.
+  User user = 1;
+}
+
+// UpsertUserResponse
+//
+// UpsertUserResponse represents a response to create or update a user.
+message UpsertUserResponse {
+  // user is the user.
+  User user = 1;
+}
+
+// GetSubscriptionResponse
+//
+// GetSubscriptionResponse represents a response to get a subscription.
+message GetSubscriptionResponse {
+  // subscription is the subscription.
+  Subscription subscription = 1;
+}
+
+// AddMemberResponse
+// 
+// AddMemberResponse represents a response to add a member to a subscription.
+message AddMemberResponse {
+  // success is the success of the operation.
+  bool success = 1;
+}
+
+// RemoveMemberResponse
+// 
+// RemoveMemberResponse represents a response to remove a member from a subscription.
+message RemoveMemberResponse {
+  // success is the success of the operation.
+  bool success = 1;
+}
+
+// PayService
+//
+// PayService represents the service to handle user payments.
+service PayService {
+  // GetUser
+  //
+  // GetUser returns the user with the given id.
+  rpc GetUser (GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}"
+    };
+  }
+
+  // GetSubscription
+  //
+  // GetSubscription returns the subscription with the given id.
+  rpc GetSubscription (GetSubscriptionRequest) returns (GetSubscriptionResponse) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}/apps/{app_id}/subscription"
+    };
+  }
+
+  // UpsertUser
+  //
+  // UpsertUser creates or updates a user.
+  rpc UpsertUser (UpsertUserRequest) returns (UpsertUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/users"
+      body: "*"
+    };
+  }
+
+  // AddMember
+  //
+  // AddMember adds a member to a subscription.
+  rpc AddMember (AddMemberRequest) returns (AddMemberResponse) {
+    option (google.api.http) = {
+      post: "/v1/users/{user_id}/apps/{app_id}/subscription/members"
+      body: "*"
+    };
+  }
+
+  // RemoveMember
+  //
+  // RemoveMember removes a member from a subscription.
+  rpc RemoveMember (RemoveMemberRequest) returns (RemoveMemberResponse) {
+    option (google.api.http) = {
+      delete: "/v1/users/{user_id}/apps/{app_id}/subscription/members/{recipient}"
+    };
+  }
+}
+
+// EventType 
+//
+// EventType represents the type of subscription that a user has purchased.
+enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0;
+  // EVENT_TYPE_PURCHASE represents a purchase event.
+  EVENT_TYPE_PURCHASE = 1;
+  // EVENT_TYPE_RENEWAL represents a renewal event.
+  EVENT_TYPE_RENEWAL = 2;
+  // EVENT_TYPE_CANCELLATION represents a cancellation event.
+  EVENT_TYPE_CANCELLATION = 3;
+  // EVENT_TYPE_EXPIRATION represents an expiration event.
+  EVENT_TYPE_EXPIRATION = 4;
+  // EVENT_TYPE_UPGRADE represents an upgrade event.
+  EVENT_TYPE_UPGRADE = 5;
+  // EVENT_TYPE_DOWNGRADE represents a downgrade event.
+  EVENT_TYPE_DOWNGRADE = 6;
+  // EVENT_TYPE_REFUND represents a refund event.
+  EVENT_TYPE_REFUND = 7;
+}
+
+// EventPayload
+//
+// EventPayload represents the payload of an event.
+message EventPayload {
+  // purchased_at is the time when the subscription was purchased or renewed. (only for purchase and renewal events)
+  optional google.protobuf.Timestamp purchased_at = 1 [(buf.validate.field).timestamp.gte.seconds = 0];
+  // expires_at is the time when the subscription expires. (only for purchase and renewal events)
+  optional google.protobuf.Timestamp expires_at = 2 [(buf.validate.field).timestamp.gte.seconds = 0];
+  // members is the number of members that the subscription has. (only for purchase events)
+  optional int32 members = 3 [(buf.validate.field).int32 = {gt: 0}];
+  // recipients is the list of emails of the recipients for the subscription. (only for purchase events)
+  repeated string recipients = 4 [(buf.validate.field).repeated.items.string.email = true];
+}
+
+// OnSubscriptionEventRequest
+//
+// OnSubscriptionEventRequest represents a request to handle a subscription event.
+message OnSubscriptionEventRequest {
+  option (buf.validate.message).cel = {
+    id: "purchase_or_renewal_event_payload",
+    message: "An event of type 1 (purchase) or 2 (renewal) must have purchased_at and expires_at fields",
+    expression:
+      // If event_type is 1 (purchase) or 2 (renewal), purchased_at and expires_at must be present.
+      "(this.event_type == 1 || this.event_type == 2) ? has(this.payload.purchased_at) && has(this.payload.expires_at): true"
+  };
+
+  option (buf.validate.message).cel = {
+    id: "purchase_event_payload",
+    message: "An event of type not 1 (purchase) must not have members and recipients fields",
+    expression:
+      // If event_type is not 1 (purchase), then members and recipients must not be present.
+      "this.event_type != 1 ? !has(this.payload.members) && !has(this.payload.recipients): true"
+  };
+
+  // user_id is the unique identifier of the user.
+  string user_id = 1 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // app_id is the unique identifier of the application.
+  string app_id = 2 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // product_id is the unique identifier of the subscription.
+  string product_id = 3 [(buf.validate.field).string = {min_len: 3, max_len: 32}];
+  // purchase_token is the token of the purchase.
+  string purchase_token = 4 [(buf.validate.field).string = {min_len: 3, max_bytes: 7168}];
+  // subscription_type is the type of the subscription.
+  SubscriptionType subscription_type = 5 [(buf.validate.field).enum = {not_in: [0]}];  
+  // provider is the provider of the subscription.
+  SubscriptionProvider provider = 6 [(buf.validate.field).enum = {not_in: [0]}];
+  // event_type is the type of the event.
+  EventType event_type = 7 [(buf.validate.field).enum = {not_in: [0]}];
+  // payload is the payload of the event.
+  EventPayload payload = 8 [(buf.validate.field) = {required: false}];
+}
+
+// OnSubscriptionEventResponse
+//
+// OnSubscriptionEventResponse represents a response to handle a subscription event.
+message OnSubscriptionEventResponse {
+  // success is the success of the operation.
+  bool success = 1;
+}
+
+// SubscriptionEventService
+//
+// SubscriptionEventService represents the service to handle subscription events.
+service SubscriptionEventService {
+  // OnSubscriptionEvent
+  //
+  // OnSubscriptionEvent handles a subscription event.
+  rpc OnSubscriptionEvent (OnSubscriptionEventRequest) returns (OnSubscriptionEventResponse) {
+    option (google.api.http) = {
+      post: "/v1/users/{user_id}/apps/{app_id}/subscription/events"
+      body: "*"
+    };
+  }
+}

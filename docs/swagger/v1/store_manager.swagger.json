@@ -1,0 +1,619 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Store manager API",
+    "description": "This document describes the store manager API for NBN23 SwishPay platform.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "NBN23",
+      "url": "https://github.com/NBN23dev/proto-store-manager",
+      "email": "develop@nbn23.com"
+    }
+  },
+  "tags": [
+    {
+      "name": "PayService"
+    },
+    {
+      "name": "SubscriptionEventService"
+    }
+  ],
+  "host": "store-manager.nbn23.app",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/users": {
+      "post": {
+        "summary": "UpsertUser",
+        "description": "UpsertUser creates or updates a user.",
+        "operationId": "PayService_UpsertUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpsertUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "UpsertUserRequest represents a request to create or update a user.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpsertUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PayService"
+        ]
+      }
+    },
+    "/v1/users/{userId}": {
+      "get": {
+        "summary": "GetUser",
+        "description": "GetUser returns the user with the given id.",
+        "operationId": "PayService_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "user_id is the unique identifier of the user.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "PayService"
+        ]
+      }
+    },
+    "/v1/users/{userId}/apps/{appId}/subscription": {
+      "get": {
+        "summary": "GetSubscription",
+        "description": "GetSubscription returns the subscription with the given id.",
+        "operationId": "PayService_GetSubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetSubscriptionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "user_id is the unique identifier of the user.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "appId",
+            "description": "app_id is the unique identifier of the application.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "PayService"
+        ]
+      }
+    },
+    "/v1/users/{userId}/apps/{appId}/subscription/events": {
+      "post": {
+        "summary": "OnSubscriptionEvent",
+        "description": "OnSubscriptionEvent handles a subscription event.",
+        "operationId": "SubscriptionEventService_OnSubscriptionEvent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1OnSubscriptionEventResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "user_id is the unique identifier of the user.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "appId",
+            "description": "app_id is the unique identifier of the application.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SubscriptionEventServiceOnSubscriptionEventBody"
+            }
+          }
+        ],
+        "tags": [
+          "SubscriptionEventService"
+        ]
+      }
+    },
+    "/v1/users/{userId}/apps/{appId}/subscription/members": {
+      "post": {
+        "summary": "AddMember",
+        "description": "AddMember adds a member to a subscription.",
+        "operationId": "PayService_AddMember",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AddMemberResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "user_id is the unique identifier of the user.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "appId",
+            "description": "app_id is the unique identifier of the application.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PayServiceAddMemberBody"
+            }
+          }
+        ],
+        "tags": [
+          "PayService"
+        ]
+      }
+    },
+    "/v1/users/{userId}/apps/{appId}/subscription/members/{recipient}": {
+      "delete": {
+        "summary": "RemoveMember",
+        "description": "RemoveMember removes a member from a subscription.",
+        "operationId": "PayService_RemoveMember",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RemoveMemberResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "user_id is the unique identifier of the user.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "appId",
+            "description": "app_id is the unique identifier of the application.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "recipient",
+            "description": "recipient is the email of the member to remove from the subscription.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "PayService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "PayServiceAddMemberBody": {
+      "type": "object",
+      "properties": {
+        "recipient": {
+          "type": "string",
+          "description": "recipient is the email of the member to add to the subscription."
+        }
+      },
+      "description": "AddMemberRequest represents a request to add a member to a subscription.",
+      "title": "AddMemberRequest"
+    },
+    "SubscriptionEventServiceOnSubscriptionEventBody": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "description": "product_id is the unique identifier of the subscription."
+        },
+        "purchaseToken": {
+          "type": "string",
+          "description": "purchase_token is the token of the purchase."
+        },
+        "subscriptionType": {
+          "$ref": "#/definitions/v1SubscriptionType",
+          "description": "subscription_type is the type of the subscription."
+        },
+        "provider": {
+          "$ref": "#/definitions/v1SubscriptionProvider",
+          "description": "provider is the provider of the subscription."
+        },
+        "eventType": {
+          "$ref": "#/definitions/v1EventType",
+          "description": "event_type is the type of the event."
+        },
+        "payload": {
+          "$ref": "#/definitions/v1EventPayload",
+          "description": "payload is the payload of the event."
+        }
+      },
+      "description": "OnSubscriptionEventRequest represents a request to handle a subscription event.",
+      "title": "OnSubscriptionEventRequest"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1AddMemberResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "success is the success of the operation."
+        }
+      },
+      "description": "AddMemberResponse represents a response to add a member to a subscription.",
+      "title": "AddMemberResponse"
+    },
+    "v1EventPayload": {
+      "type": "object",
+      "properties": {
+        "purchasedAt": {
+          "type": "string",
+          "format": "date-time",
+          "title": "purchased_at is the time when the subscription was purchased or renewed. (only for purchase and renewal events)"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "title": "expires_at is the time when the subscription expires. (only for purchase and renewal events)"
+        },
+        "members": {
+          "type": "integer",
+          "format": "int32",
+          "title": "members is the number of members that the subscription has. (only for purchase events)"
+        },
+        "recipients": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "recipients is the list of emails of the recipients for the subscription. (only for purchase events)"
+        }
+      },
+      "description": "EventPayload represents the payload of an event.",
+      "title": "EventPayload"
+    },
+    "v1EventType": {
+      "type": "string",
+      "enum": [
+        "EVENT_TYPE_UNSPECIFIED",
+        "EVENT_TYPE_PURCHASE",
+        "EVENT_TYPE_RENEWAL",
+        "EVENT_TYPE_CANCELLATION",
+        "EVENT_TYPE_EXPIRATION",
+        "EVENT_TYPE_UPGRADE",
+        "EVENT_TYPE_DOWNGRADE",
+        "EVENT_TYPE_REFUND"
+      ],
+      "default": "EVENT_TYPE_UNSPECIFIED",
+      "description": "EventType represents the type of subscription that a user has purchased.\n\n - EVENT_TYPE_PURCHASE: EVENT_TYPE_PURCHASE represents a purchase event.\n - EVENT_TYPE_RENEWAL: EVENT_TYPE_RENEWAL represents a renewal event.\n - EVENT_TYPE_CANCELLATION: EVENT_TYPE_CANCELLATION represents a cancellation event.\n - EVENT_TYPE_EXPIRATION: EVENT_TYPE_EXPIRATION represents an expiration event.\n - EVENT_TYPE_UPGRADE: EVENT_TYPE_UPGRADE represents an upgrade event.\n - EVENT_TYPE_DOWNGRADE: EVENT_TYPE_DOWNGRADE represents a downgrade event.\n - EVENT_TYPE_REFUND: EVENT_TYPE_REFUND represents a refund event.",
+      "title": "EventType"
+    },
+    "v1GetSubscriptionResponse": {
+      "type": "object",
+      "properties": {
+        "subscription": {
+          "$ref": "#/definitions/v1Subscription",
+          "description": "subscription is the subscription."
+        }
+      },
+      "description": "GetSubscriptionResponse represents a response to get a subscription.",
+      "title": "GetSubscriptionResponse"
+    },
+    "v1GetUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1User",
+          "description": "user is the user."
+        }
+      },
+      "description": "GetUserResponse represents a response to get a user.",
+      "title": "GetUserResponse"
+    },
+    "v1OnSubscriptionEventResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "success is the success of the operation."
+        }
+      },
+      "description": "OnSubscriptionEventResponse represents a response to handle a subscription event.",
+      "title": "OnSubscriptionEventResponse"
+    },
+    "v1ProductPayload": {
+      "type": "object",
+      "properties": {
+        "members": {
+          "type": "integer",
+          "format": "int32",
+          "description": "members is the number of members that the subscription has."
+        },
+        "recipients": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "recipients is the list of emails of the recipients of the subscription."
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "owner_id is the unique identifier of the owner of the subscription."
+        },
+        "giftedId": {
+          "type": "string",
+          "description": "gifted_id is the unique identifier of the user who gifted the subscription."
+        }
+      },
+      "description": "ProductPayload represents the payload of a product.",
+      "title": "ProductPayload"
+    },
+    "v1RemoveMemberResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "success is the success of the operation."
+        }
+      },
+      "description": "RemoveMemberResponse represents a response to remove a member from a subscription.",
+      "title": "RemoveMemberResponse"
+    },
+    "v1Subscription": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "user_id is the unique identifier of the user."
+        },
+        "appId": {
+          "type": "string",
+          "description": "app_id is the unique identifier of the application."
+        },
+        "productId": {
+          "type": "string",
+          "description": "product_id is the unique identifier of the product."
+        },
+        "purchaseToken": {
+          "type": "string",
+          "description": "purchase_token is the purchase token of the subscription."
+        },
+        "type": {
+          "$ref": "#/definitions/v1SubscriptionType",
+          "description": "type is the type of the subscription."
+        },
+        "provider": {
+          "$ref": "#/definitions/v1SubscriptionProvider",
+          "description": "provider is the provider of the subscription."
+        },
+        "purchasedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "purchased_at is the time when the subscription was purchased."
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "expires_at is the time when the subscription expires."
+        },
+        "productPayload": {
+          "$ref": "#/definitions/v1ProductPayload",
+          "description": "product_payload is the payload of the product."
+        }
+      },
+      "description": "Subscription represents a subscription that a user has purchased.",
+      "title": "Subscription"
+    },
+    "v1SubscriptionProvider": {
+      "type": "string",
+      "enum": [
+        "SUBSCRIPTION_PROVIDER_UNSPECIFIED",
+        "SUBSCRIPTION_PROVIDER_APPLE",
+        "SUBSCRIPTION_PROVIDER_GOOGLE",
+        "SUBSCRIPTION_PROVIDER_STRIPE",
+        "SUBSCRIPTION_PROVIDER_REDSYS"
+      ],
+      "default": "SUBSCRIPTION_PROVIDER_UNSPECIFIED",
+      "description": "SubscriptionProvider represents the provider of the subscription.\n\n - SUBSCRIPTION_PROVIDER_APPLE: SUBSCRIPTION_PROVIDER_APPLE represents a subscription purchased through Apple.\n - SUBSCRIPTION_PROVIDER_GOOGLE: SUBSCRIPTION_PROVIDER_GOOGLE represents a subscription purchased through Google.\n - SUBSCRIPTION_PROVIDER_STRIPE: SUBSCRIPTION_PROVIDER_STRIPE represents a subscription purchased through Stripe.\n - SUBSCRIPTION_PROVIDER_REDSYS: SUBSCRIPTION_PROVIDER_REDSYS represents a subscription purchased through Redsys.",
+      "title": "SubscriptionProvider"
+    },
+    "v1SubscriptionType": {
+      "type": "string",
+      "enum": [
+        "SUBSCRIPTION_TYPE_UNSPECIFIED",
+        "SUBSCRIPTION_TYPE_TRIAL",
+        "SUBSCRIPTION_TYPE_PREMIUM",
+        "SUBSCRIPTION_TYPE_MANUAL_PREMIUM"
+      ],
+      "default": "SUBSCRIPTION_TYPE_UNSPECIFIED",
+      "description": "SubscriptionType represents the type of subscription that a user has purchased.\n\n - SUBSCRIPTION_TYPE_TRIAL: SUBSCRIPTION_TYPE_TRIAL represents a trial subscription.\n - SUBSCRIPTION_TYPE_PREMIUM: SUBSCRIPTION_TYPE_TRIAL represents a premium subscription.\n - SUBSCRIPTION_TYPE_MANUAL_PREMIUM: SUBSCRIPTION_TYPE_PREMIUM represents a manual premium subscription.",
+      "title": "SubscriptionType"
+    },
+    "v1UpsertUserRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "email is the email of the user."
+        },
+        "name": {
+          "type": "string",
+          "description": "name is the name of the user."
+        },
+        "image": {
+          "type": "string",
+          "description": "image is the image URL of the user."
+        }
+      },
+      "description": "UpsertUserRequest represents a request to create or update a user.",
+      "title": "UpsertUserRequest"
+    },
+    "v1UpsertUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1User",
+          "description": "user is the user."
+        }
+      },
+      "description": "UpsertUserResponse represents a response to create or update a user.",
+      "title": "UpsertUserResponse"
+    },
+    "v1User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "id is the unique identifier of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "email is the email of the user."
+        },
+        "name": {
+          "type": "string",
+          "description": "name is the name of the user."
+        },
+        "image": {
+          "type": "string",
+          "description": "image is the image URL of the user."
+        }
+      },
+      "description": "User represents a user of the application.",
+      "title": "User"
+    }
+  },
+  "securityDefinitions": {
+    "bearer": {
+      "type": "apiKey",
+      "description": "Authentication bearer token: {'Authorization': 'Bearer \u003ctoken\u003e'}",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ]
+}
