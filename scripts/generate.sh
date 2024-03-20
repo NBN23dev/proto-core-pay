@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # update dependencies
-cmd="buf mod update"
+cmd="buf dep update"
 
 echo "Running '$cmd'"
 $cmd
